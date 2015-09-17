@@ -48,6 +48,7 @@
     <Compile Include="BingTranslate.cs" />
     <Compile Include="GoogleTranslate.cs" />
     <Compile Include="ResourceBundle.cs" />
+    <Compile Include="SillyLanguages.cs" />
     <Compile Include="TranslateManager.cs" />
     <Compile Include="Translator.cs" />
     <Compile Include="Languages.cs" />

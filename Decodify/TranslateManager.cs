@@ -41,7 +41,39 @@ namespace Decodify
 
         private static void TranslateSillyLanguages()
         {
+            foreach (var language in SillyLanguages.Language)
+            {
+                Console.WriteLine("Starting " + language.Key);
+                var defaultCode = language.Key.Substring(0, 2);
+                var keysToTranslate = _differentKeys.Concat(_missingKeys);
+                ResourceBundle oldBundle;
+                try
+                {
+                    oldBundle = ResourceBundle.Parse(PathGenerator(defaultCode));
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("No properties file found for language " + language.Key);
+                    keysToTranslate = _englishBundle.Entries.Keys;
+                    oldBundle = new ResourceBundle();
+                }
+                var i = 0.0;
+                var toTranslate = keysToTranslate as string[] ?? keysToTranslate.ToArray();
+                var length = toTranslate.Count();
 
+                foreach (var key in toTranslate)
+                {
+                    Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete");
+                    var englishWords = _englishBundle[key];
+                    var translated = language.Value.Translate(englishWords);
+                    translated = Regex.Replace(translated, @"[^\x00-\x7F]", c => $@"\u{(int)c.Value[0]:x4}");
+                    oldBundle[key] = translated;
+                    i++;
+                }
+                Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete");
+                ResourceBundle.Save(oldBundle, PathGenerator(defaultCode));
+                Console.WriteLine("\nFinished " + language.Key);
+            }
         }
 
         private static void TranslateLanguages()
