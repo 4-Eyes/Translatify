@@ -92,7 +92,11 @@ namespace Decodify
                 "IntelliJ",
                 "Agile",
                 "Client",
-                "Documentation"
+                "Documentation",
+                "It worked on my machine",
+                "Did you break it?",
+                "Fail",
+                "derp",
             };
 
             var spl = english.Split(' ');
@@ -105,7 +109,7 @@ namespace Decodify
 
         private static string TranslateFoo(string english)
         {
-            switch (Rand.Next(4))
+            switch (Rand.Next(5))
             {
                 case 0:
                     return "Foo";
@@ -115,6 +119,8 @@ namespace Decodify
                     return "Baar";
                 case 3:
                     return "Foooo";
+                case 4:
+                    return "FooBar";
                 default:
                     return "Foo?";
             }
