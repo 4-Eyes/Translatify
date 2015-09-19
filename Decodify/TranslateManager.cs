@@ -34,22 +34,24 @@ namespace Decodify
             Console.WriteLine("Finished Loading Reference Files");
             _differentKeys = _englishBundle.DifferentKeys(referenceBundle);
             _missingKeys = referenceBundle.MissingKeys(_englishBundle);
+            Console.WriteLine("Translating Normal Languages\n----------------------------------");
             TranslateLanguages();
+            Console.WriteLine("\nTranslating Silly Languages\n----------------------------------");
             TranslateSillyLanguages();
             ResourceBundle.Save(_englishBundle, "english_reference.properties");
         }
 
         private static void TranslateSillyLanguages()
         {
+            var completed = 0;
             foreach (var language in SillyLanguages.Language)
             {
                 Console.WriteLine("Starting " + language.Key);
-                var defaultCode = language.Key.Substring(0, 2);
                 var keysToTranslate = _differentKeys.Concat(_missingKeys);
                 ResourceBundle oldBundle;
                 try
                 {
-                    oldBundle = ResourceBundle.Parse(PathGenerator(defaultCode));
+                    oldBundle = ResourceBundle.Parse(PathGenerator(language.Value));
                 }
                 catch (FileNotFoundException)
                 {
@@ -63,21 +65,24 @@ namespace Decodify
 
                 foreach (var key in toTranslate)
                 {
-                    Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete");
+                    Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete,   \t" +
+                                  $"{Math.Round(((i / length + completed) / SillyLanguages.Language.Count) * 100, 2)}% Overall            ");
                     var englishWords = _englishBundle[key];
                     var translated = language.Value.Translate(englishWords);
                     translated = Regex.Replace(translated, @"[^\x00-\x7F]", c => $@"\u{(int)c.Value[0]:x4}");
                     oldBundle[key] = translated;
                     i++;
                 }
-                Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete");
-                ResourceBundle.Save(oldBundle, PathGenerator(defaultCode));
+                Console.Write("\r100% Complete                ");
+                ResourceBundle.Save(oldBundle, PathGenerator(language.Value));
                 Console.WriteLine("\nFinished " + language.Key);
+                completed++;
             }
         }
 
         private static void TranslateLanguages()
         {
+            var completed = 0;
             foreach (var language in Languages.Language)
             {
                 Console.WriteLine("Starting " + language.Key);
@@ -87,7 +92,7 @@ namespace Decodify
                 ResourceBundle oldBundle;
                 try
                 {
-                    oldBundle = ResourceBundle.Parse(PathGenerator(defaultCode));
+                    oldBundle = ResourceBundle.Parse(PathGenerator(language.Value));
                 }
                 catch (FileNotFoundException)
                 {
@@ -101,7 +106,9 @@ namespace Decodify
 
                 foreach (var key in toTranslate)
                 {
-                    Console.Write($"\r{Math.Round(i/length*100, 2)}% Complete");
+                    var percent = i/length;
+                    Console.Write($"\r{Math.Round(percent * 100, 2)}% Complete,   \t" +
+                                  $"{Math.Round(((percent + completed) / Languages.Language.Count) * 100, 2)}% Overall      ");
                     var englishWords = _englishBundle[key];
                     string translated;
                     if (defaultLanguage.Equals("Google"))
@@ -120,16 +127,16 @@ namespace Decodify
                     oldBundle[key] = translated;
                     i++;
                 }
-                Console.Write($"\r{Math.Round(i / length * 100, 2)}% Complete");
-                ResourceBundle.Save(oldBundle, PathGenerator(defaultCode));
+                Console.Write("\r100% Complete    \t                ");
+                ResourceBundle.Save(oldBundle, PathGenerator(language.Value));
                 Console.WriteLine("\nFinished " + language.Key);
+                completed++;
             }
         }
 
-        private static string PathGenerator(string languageCode)
+        private static string PathGenerator(LanguageCodeBase language)
         {
-            return BasePath + "\\" + BundleName + "_" + languageCode.ToLower().Replace("-", "") + "_" +
-                   languageCode.ToUpper().Replace("-", "") + ".properties";
+            return BasePath + "\\" + BundleName + "_" + language.LowerCode + "_" + language.UpperCode + ".properties";
         }
     }
 }

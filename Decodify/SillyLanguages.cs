@@ -3,19 +3,27 @@ using System.Collections.Generic;
 
 namespace Decodify
 {
-    public class SillyLanguages
+    public static class SillyLanguages
     {
-        public class LanguageCodes
+        public class LanguageCodes : LanguageCodeBase
         {
-            public Func<string, string> Translate { get; set; } 
+            public Func<string, string> Translate { get; set; }
+            private readonly string _code;
+            public override string LowerCode => _code;
+            public override string UpperCode => _code;
+
+            public LanguageCodes(string code)
+            {
+                _code = code;
+            }
         }
 
         public static readonly Dictionary<string, LanguageCodes> Language = new Dictionary<string, LanguageCodes>()
         {
-            {"Hodor", new LanguageCodes {Translate = TranslateHodor}},
-            {"Programmer", new LanguageCodes {Translate = TranslateProgrammer}},
-            {"Foo", new LanguageCodes {Translate = TranslateFoo}},
-            {"Groot", new LanguageCodes {Translate = TranslateGroot}}
+            {"Hodor", new LanguageCodes("ho") {Translate = TranslateHodor}},
+            {"Programmer", new LanguageCodes("pr") {Translate = TranslateProgrammer}},
+            {"Foo", new LanguageCodes("fo") {Translate = TranslateFoo}},
+            {"Groot", new LanguageCodes("gr") {Translate = TranslateGroot}}
         };
 
         private static readonly Random Rand = new Random();
@@ -28,7 +36,7 @@ namespace Decodify
             }
 
             var spl = english.Split(' ');
-            for (int i = 0; i < spl.Length; i++)
+            for (var i = 0; i < spl.Length; i++)
             {
                 if (spl[i].Length < 5 && Rand.Next(3) == 1)
                 {
