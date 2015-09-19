@@ -4,7 +4,7 @@ namespace Decodify
 {
     public static class Languages
     {
-        public class LanguageCodes
+        public class LanguageCodes : LanguageCodeBase
         {
             public string Google { get; set; }
             public string Bing { get; set; }
@@ -13,9 +13,18 @@ namespace Decodify
             {
                 return Google != null ? new[] {Google, "Google"} : new[] {Bing, "Bing"};
             }
+
+            public string FallbackCode { set; private get; }
+            public override string LowerCode => FallbackCode ?? GetDefaultBaseCode().ToLower();
+            public override string UpperCode => GetDefaultBaseCode().ToUpper();
+
+            private string GetDefaultBaseCode()
+            {
+                return DefaultCode()[0].ToLower().Replace("-", "");
+            }
         }
 
-        public static Dictionary<string, LanguageCodes> Language = new Dictionary<string, LanguageCodes>()
+        public static readonly Dictionary<string, LanguageCodes> Language = new Dictionary<string, LanguageCodes>()
         {
             {"Afrikaans", new LanguageCodes {Google="af", Bing=null}},
             {"Albanian", new LanguageCodes {Google="sq", Bing=null}},
@@ -54,7 +63,7 @@ namespace Decodify
             {"Hungarian", new LanguageCodes {Google="hu", Bing="hu"}},
             {"Icelandic", new LanguageCodes {Google="is", Bing=null}},
             {"Igbo", new LanguageCodes {Google="ig", Bing=null}},
-            {"Indonesian", new LanguageCodes {Google="id", Bing="id"}},
+            {"Indonesian", new LanguageCodes {Google="id", Bing="id", FallbackCode = "in"}},
             {"Irish", new LanguageCodes {Google="ga", Bing=null}},
             {"Italian", new LanguageCodes {Google="it", Bing="it"}},
             {"Japanese", new LanguageCodes {Google="ja", Bing="ja"}},
@@ -108,7 +117,7 @@ namespace Decodify
             {"Uzbek", new LanguageCodes {Google="uz", Bing=null}},
             {"Vietnamese", new LanguageCodes {Google="vi", Bing="vi"}},
             {"Welsh", new LanguageCodes {Google="cy", Bing="cy"}},
-            {"Yiddish", new LanguageCodes {Google="yi", Bing=null}},
+            {"Yiddish", new LanguageCodes {Google="yi", Bing=null, FallbackCode = "ji"}},
             {"Yoruba", new LanguageCodes {Google="yo", Bing=null}},
             {"Yucatec Maya", new LanguageCodes {Google=null, Bing="yua"}},
             {"Zulu", new LanguageCodes {Google="zu", Bing=null}},
