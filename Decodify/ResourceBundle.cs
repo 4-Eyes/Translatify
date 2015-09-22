@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Decodify
 {
@@ -43,6 +45,7 @@ namespace Decodify
         public static void Save(ResourceBundle translation, string path)
         {
             var lines = translation.Entries.Select(pair => $"{pair.Key} = {pair.Value}").ToList();
+            lines.Sort((s, s1) => string.Compare(s, s1, StringComparison.OrdinalIgnoreCase));
             File.WriteAllLines(path, lines);
         }
 

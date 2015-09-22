@@ -109,22 +109,31 @@ namespace Decodify
                     var percent = i/length;
                     Console.Write($"\r{Math.Round(percent * 100, 2)}% Complete,   \t" +
                                   $"{Math.Round(((percent + completed) / Languages.Language.Count) * 100, 2)}% Overall      ");
-                    var englishWords = _englishBundle[key];
-                    string translated;
-                    if (defaultLanguage.Equals("Google"))
+                    var englishWords = _englishBundle[key].Split('\n');
+                    var translated = new string[englishWords.Length];
+                    var j = 0;
+                    foreach (var englishWord in englishWords)
                     {
-                        translated = GoogleTranslator.Translate(englishWords, defaultCode);
-                        if (translated.Equals(englishWords))
+                        if (defaultLanguage.Equals("Google"))
                         {
-                            translated = BingTranslator.Translate(englishWords, language.Value.Bing);
+                            var tempTranslated = GoogleTranslator.Translate(englishWord, defaultCode);
+                            if (tempTranslated.Equals(englishWord))
+                            {
+                                tempTranslated = BingTranslator.Translate(englishWord, language.Value.Bing);
+                            }
+                            translated[j] = tempTranslated;
                         }
+                        else
+                        {
+                            translated[j] = BingTranslator.Translate(englishWord, defaultCode);
+                        }
+                        i++;
+                        translated[j] = Regex.Replace(translated[j], @"[^\x00-\x7F]", c => $@"\u{(int)c.Value[0]:x4}");
+                        translated[j] = Regex.Replace(translated[j], @"\\$", c => @"");
                     }
-                    else
-                    {
-                        translated = BingTranslator.Translate(englishWords, defaultCode);
-                    }
-                    translated = Regex.Replace(translated, @"[^\x00-\x7F]", c => $@"\u{(int) c.Value[0]:x4}");
-                    oldBundle[key] = translated;
+
+                    var result = string.Join("\n", translated);
+                    oldBundle[key] = result;
                     i++;
                 }
                 Console.Write("\r100% Complete    \t                ");
