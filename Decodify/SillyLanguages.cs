@@ -23,8 +23,14 @@ namespace Decodify
             {"Hodor", new LanguageCodes("ho") {Translate = TranslateHodor}},
             {"Programmer", new LanguageCodes("pr") {Translate = TranslateProgrammer}},
             {"Foo", new LanguageCodes("fo") {Translate = TranslateFoo}},
-            {"Groot", new LanguageCodes("gr") {Translate = TranslateGroot}}
+            {"Groot", new LanguageCodes("gr") {Translate = TranslateGroot}},
+            {"White Space", new LanguageCodes("wi") {Translate = TranslateWhiteSpace}  }
         };
+
+        private static string TranslateWhiteSpace(string arg)
+        {
+            return " ";
+        }
 
         private static readonly Random Rand = new Random();
 
