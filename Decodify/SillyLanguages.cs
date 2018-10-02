@@ -24,7 +24,8 @@ namespace Decodify
             {"Programmer", new LanguageCodes("pr") {Translate = TranslateProgrammer}},
             {"Foo", new LanguageCodes("fo") {Translate = TranslateFoo}},
             {"Groot", new LanguageCodes("gr") {Translate = TranslateGroot}},
-            {"White Space", new LanguageCodes("wi") {Translate = TranslateWhiteSpace}  }
+            {"White Space", new LanguageCodes("wi") {Translate = TranslateWhiteSpace}},
+            {"Random", new LanguageCodes("rx") {Translate = TranslateRandom}}
         };
 
         private static string TranslateWhiteSpace(string arg)
@@ -150,6 +151,11 @@ namespace Decodify
                 spl[i] = words[Rand.Next(words.Length)];
             }
             return string.Join(" ", spl);
+        }
+
+        private static string TranslateRandom(string english)
+        {
+            return Rand.Next(english.Length).ToString();
         }
     }
 }
